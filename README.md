@@ -287,6 +287,7 @@ select {
   box-sizing: border-box;
   border: 2px solid #eee;
   border-radius: 0px;
+  height: 40px;
 }
 
 input[type=submit] {
@@ -310,4 +311,14 @@ input[type=submit]:hover {
 
 ### Step 4
 
-Now that we have the form, we just need to attach the events provided by de MercadoPago Javascript SDK
+Now that we have the form, we just need to attach the events & configurations methods provided by de MercadoPago Javascript SDK
+
+1. The first method we need to call is `getIdentificationTypes` inside `componentDidMount`
+
+````javascript
+window.Mercadopago.getIdentificationTypes();
+````
+
+This method is going to populate the identification types select with the ones from the country of the public key provided
+
+
