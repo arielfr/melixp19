@@ -1,0 +1,6 @@
+# Trash
+.DS_Store
+.idea
+*.iml
+.vs/*
+.vscode/*
