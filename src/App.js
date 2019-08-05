@@ -11,8 +11,11 @@ class App extends Component {
     this.onSubmit = this.onSubmit.bind(this);
   }
 
+  /**
+   * Set credentials and call initial methods
+   */
   componentDidMount() {
-    window.Mercadopago.setPublishableKey("TEST-*******");
+    window.Mercadopago.setPublishableKey("TEST-******");
     window.Mercadopago.getIdentificationTypes();
   }
 
@@ -60,16 +63,25 @@ class App extends Component {
     }
   };
 
+  /**
+   * This method is going to be called when the form is submited
+   * Is going to create the card token using the MercadoPago SDK
+   *
+   * @param {object} event React event
+   */
   onSubmit(event) {
     event.preventDefault();
-
     const form = document.getElementsByTagName('form')[0];
-
-    window.Mercadopago.createToken(form, this.sdkResponseHandler); // The function "sdkResponseHandler" is defined below
-
-    return false;
+    window.Mercadopago.createToken(form, this.sdkResponseHandler);
   }
 
+  /**
+   * This method is going to handle the createToken call made by the SDK
+   * If it is successful is going to add a hidden input with the card token value
+   *
+   * @param {Number} status HTTP status code
+   * @param {Object} response The response from SDK
+   */
   sdkResponseHandler(status, response) {
     if (status !== 200 && status !== 201) {
       alert("verify filled data");

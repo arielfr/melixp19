@@ -2,9 +2,10 @@ const express = require('express');
 const bodyParser = require('body-parser');
 const mercadopago = require('mercadopago');
 const app = express();
+const port = 3001;
 
 // Set the mercadopago credentials
-mercadopago.configurations.setAccessToken('TEST-********');
+mercadopago.configurations.setAccessToken('TEST-*******');
 
 // Attach the body-parser
 app.use(bodyParser.urlencoded({ extended: false }));
@@ -14,6 +15,9 @@ app.post('/pay', function (req, res) {
   const paymentMethodId = req.body.paymentMethodId;
   const email = req.body.email;
 
+  console.log(`Parameters receive ${JSON.stringify(req.body)}`);
+
+  // Creating payment payload
   const paymentData = {
     transaction_amount: 100,
     token: token,
@@ -25,13 +29,18 @@ app.post('/pay', function (req, res) {
     },
   };
 
-  mercadopago.payment.save(paymentData).then(function (payment) {
+  // Do payment
+  mercadopago.payment.save(paymentData).then((payment) => {
+    console.log('Payment done!');
     res.send(payment);
   }).catch(function (error) {
+    console.log(`There was an error making the payment ${error.message}`);
     res.status(500).send({
       message: error.message
     });
   });
 });
 
-app.listen(3001);
+console.log(`Application listening on port ${port}`);
+
+app.listen(port);
