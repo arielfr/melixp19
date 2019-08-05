@@ -432,7 +432,7 @@ This method is going to create a `card token` to be sent to the server
 
 ![Party Gif](https://user-images.githubusercontent.com/4379982/62431004-00064180-b6fa-11e9-83a0-c05fae609ba4.gif)
 
-###  Step 6 - API Side
+###  Step 5 - API Side
 
 This form is going to sent the following information to the backend:
 
@@ -461,3 +461,29 @@ And create an empty `index.js` file
 ```
 $ touch index.js
 ```
+
+###  Step 6
+
+Now we need to create a `express` basic server and attach the `body-parser`
+
+```javascript
+const express = require('express');
+const bodyParser = require('body-parser');
+const app = express();
+
+// Attach the body-parser
+app.use(bodyParser.urlencoded({ extended: false }));
+
+app.listen(3001);
+```
+
+Now that we have a server we need to add the `mercadopago` SDK and configure it
+
+```javascript
+const mercadopago = require('mercadopago');
+
+mercadopago.configurations.setAccessToken('TEST-********');
+```
+
+
+
