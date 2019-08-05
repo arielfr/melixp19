@@ -90,7 +90,7 @@ class App extends Component {
     return (
       <div className="App">
         <h1>Checkout</h1>
-        <form action="" method="post" id="pay" name="pay" onSubmit={this.onSubmit}>
+        <form action="http://localhost:3001/pay" method="post" id="pay" name="pay" onSubmit={this.onSubmit}>
           <fieldset>
             <ul>
               <li>

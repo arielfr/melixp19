@@ -485,5 +485,55 @@ const mercadopago = require('mercadopago');
 mercadopago.configurations.setAccessToken('TEST-********');
 ```
 
+###  Step 7
 
+Now we just need a route to receive the data from the form and make the payment
 
+```javascript
+app.post('/pay', function (req, res) {
+  // Route handler
+});
+```
+
+Once we create the route we need to get the form data
+
+```javascript
+const token = req.body.token;
+const paymentMethodId = req.body.paymentMethodId;
+const email = req.body.email;
+```
+
+Then create the payload to be send to the Payments API
+
+```javascript
+  const paymentData = {
+    transaction_amount: 100,
+    token: token,
+    description: 'MeliXP 2019 - Test Payment',
+    installments: 1,
+    payment_method_id: paymentMethodId,
+    payer: {
+      email: email,
+    },
+  };
+```
+
+Do the payment
+
+```javascript
+  mercadopago.payment.save(paymentData).then(function (payment) {
+    res.send(payment);
+  }).catch(function (error) {
+    res.status(500).send({
+      message: error.message
+    });
+  });
+```
+
+Now we just need to change the `action` property on the form and do your payment
+
+```javascript
+<form action="http://localhost:3001/pay" method="post" id="pay" name="pay" onSubmit={this.onSubmit}>
+```
+
+That's it!
