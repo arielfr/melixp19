@@ -162,7 +162,7 @@ class App extends Component {
                   type="text"
                   id="cardExpirationYear"
                   data-checkout="cardExpirationYear"
-                  placeholder="2015"
+                  placeholder="2019"
                   autoComplete="off"
                 />
               </li>
