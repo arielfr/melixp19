@@ -321,4 +321,116 @@ window.Mercadopago.getIdentificationTypes();
 
 This method is going to populate the identification types select with the ones from the country of the public key provided
 
+2. Add event listener for the card number input. This is going to be guessing the payment method id from the first 6 numbers entered
+
+We need to add the React property `onChange` on the credit card number input
+
+```javascript
+<input
+  type="text"
+  id="cardNumber"
+  data-checkout="cardNumber"
+  placeholder="4509953566233704"
+  autoComplete="off"
+  onChange={this.guessingPaymentMethod}
+/>
+```
+
+```javascript
+  guessingPaymentMethod(event) {
+    const bin = event.currentTarget.value;
+
+    if (bin.length >= 6) {
+      window.Mercadopago.getPaymentMethod({
+        "bin": bin.substring(0, 6),
+      }, this.setPaymentMethodInfo);
+    }
+  }
+```
+
+Then we need to create `setPaymentMethodInfo` that is going to create a hidden input on form with the payment method id guess from the credit card number (guessing)
+
+```javascript
+  setPaymentMethodInfo(status, response) {
+    if (status === 200) {
+      const paymentMethodElement = document.querySelector('input[name=paymentMethodId]');
+
+      if (paymentMethodElement) {
+        paymentMethodElement.value = response[0].id;
+      } else {
+        const form = document.querySelector('#pay');
+        const input = document.createElement('input');
+
+        input.setattribute('name', 'paymentMethodId');
+        input.setAttribute('type', 'hidden');
+        input.setAttribute('value', response[0].id);
+
+        form.appendChild(input);
+      }
+    } else {
+      alert(`Payment Method not Found`);
+    }
+  };
+```
+
+3. We need to attach a `onSubmit` event for the checkout form
+
+```javascript
+<form action="" method="post" id="pay" name="pay" onSubmit={this.onSubmit}>
+```
+
+Then we need to add the `onSubmit` method
+
+```javascript
+  onSubmit(event) {
+    event.preventDefault();
+
+    const form = document.getElementsByTagName('form')[0];
+
+    window.Mercadopago.createToken(form, this.sdkResponseHandler); // The function "sdkResponseHandler" is defined below
+
+    return false;
+  }
+```
+
+This method is going to create a `card token` to be sent to the server
+
+4. When the card token is created, we need to add it to the form as a hidden field and submit the form
+
+```javascript
+  sdkResponseHandler(status, response) {
+    if (status !== 200 && status !== 201) {
+      alert("verify filled data");
+    } else {
+      const form = document.querySelector('#pay');
+      const card = document.createElement('input');
+      
+      card.setAttribute('name', 'token');
+      card.setAttribute('type', 'hidden');
+      card.setAttribute('value', response.id);
+      
+      form.appendChild(card);
+      form.submit();
+    }
+  };
+```
+
+5. Bind all the methods
+
+```javascript
+  constructor(props){
+    super(props);
+
+    this.setPaymentMethodInfo = this.setPaymentMethodInfo.bind(this);
+    this.guessingPaymentMethod = this.guessingPaymentMethod.bind(this);
+    this.sdkResponseHandler = this.sdkResponseHandler.bind(this);
+    this.onSubmit = this.onSubmit.bind(this);
+  }
+```
+
+6. Party! You just did the payment form
+
+![Party Gif](https://user-images.githubusercontent.com/4379982/62431004-00064180-b6fa-11e9-83a0-c05fae609ba4.gif)
+
+## Backend Side
 

@@ -2,15 +2,95 @@ import React, { Component } from 'react';
 import './App.css';
 
 class App extends Component {
-  componentDidMount() {
-    window.Mercadopago.setPublishableKey('TEST-************');
+  constructor(props){
+    super(props);
+
+    this.setPaymentMethodInfo = this.setPaymentMethodInfo.bind(this);
+    this.guessingPaymentMethod = this.guessingPaymentMethod.bind(this);
+    this.sdkResponseHandler = this.sdkResponseHandler.bind(this);
+    this.onSubmit = this.onSubmit.bind(this);
   }
+
+  componentDidMount() {
+    window.Mercadopago.setPublishableKey("TEST-*******");
+    window.Mercadopago.getIdentificationTypes();
+  }
+
+  /**
+   * This method is executed when credit card input has more than 6 characters
+   * Then calls getPaymentMethod function of the MercadoPago SDK
+   *
+   * @param {Object} event HTML event
+   */
+  guessingPaymentMethod(event) {
+    const bin = event.currentTarget.value;
+
+    if (bin.length >= 6) {
+      window.Mercadopago.getPaymentMethod({
+        "bin": bin.substring(0, 6),
+      }, this.setPaymentMethodInfo);
+    }
+  }
+
+  /**
+   * This method is going to be the callback one from getPaymentMethod of the MercadoPago Javascript SDK
+   * Is going to be creating a hidden input with the paymentMethodId obtain from the SDK
+   *
+   * @param {Number} status HTTP status code
+   * @param {Object} response API Call response
+   */
+  setPaymentMethodInfo(status, response) {
+    if (status === 200) {
+      const paymentMethodElement = document.querySelector('input[name=paymentMethodId]');
+
+      if (paymentMethodElement) {
+        paymentMethodElement.value = response[0].id;
+      } else {
+        const form = document.querySelector('#pay');
+        const input = document.createElement('input');
+
+        input.setattribute('name', 'paymentMethodId');
+        input.setAttribute('type', 'hidden');
+        input.setAttribute('value', response[0].id);
+
+        form.appendChild(input);
+      }
+    } else {
+      alert(`Payment Method not Found`);
+    }
+  };
+
+  onSubmit(event) {
+    event.preventDefault();
+
+    const form = document.getElementsByTagName('form')[0];
+
+    window.Mercadopago.createToken(form, this.sdkResponseHandler); // The function "sdkResponseHandler" is defined below
+
+    return false;
+  }
+
+  sdkResponseHandler(status, response) {
+    if (status !== 200 && status !== 201) {
+      alert("verify filled data");
+    } else {
+      const form = document.querySelector('#pay');
+      const card = document.createElement('input');
+
+      card.setAttribute('name', 'token');
+      card.setAttribute('type', 'hidden');
+      card.setAttribute('value', response.id);
+
+      form.appendChild(card);
+      form.submit();
+    }
+  };
 
   render() {
     return (
       <div className="App">
         <h1>Checkout</h1>
-        <form action="" method="post" id="pay" name="pay">
+        <form action="" method="post" id="pay" name="pay" onSubmit={this.onSubmit}>
           <fieldset>
             <ul>
               <li>
@@ -20,7 +100,7 @@ class App extends Component {
                 <input
                   id="email"
                   name="email"
-                  value="test_user_19653727@testuser.com"
+                  defaultValue="test_user_19653727@testuser.com"
                   type="email"
                   placeholder="your email"
                 />
@@ -35,6 +115,8 @@ class App extends Component {
                   data-checkout="cardNumber"
                   placeholder="4509953566233704"
                   autoComplete="off"
+                  onChange={this.guessingPaymentMethod}
+                  maxLength={16}
                 />
               </li>
               <li>
