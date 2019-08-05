@@ -432,5 +432,32 @@ This method is going to create a `card token` to be sent to the server
 
 ![Party Gif](https://user-images.githubusercontent.com/4379982/62431004-00064180-b6fa-11e9-83a0-c05fae609ba4.gif)
 
-## Backend Side
+###  Step 6 - API Side
 
+This form is going to sent the following information to the backend:
+
+* email
+* paymentMethodId
+* token
+
+Now we need to make an API and integrate it with mercadopago
+
+#### Creating the API
+
+Let's start creating a `api` folder and init the project
+
+```
+$ npm init
+```
+
+Install the following dependencies
+
+* [express](https://npmjs.com/package/express) - For the web server
+* [body-parser](https://npmjs.com/package/body-parser)
+* [mercadopago](https://npmjs.com/package/mercadopago) - Official NodeJS mercadopago API
+
+And create an empty `index.js` file
+
+```
+$ touch index.js
+```
