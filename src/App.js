@@ -9,6 +9,10 @@ class App extends Component {
     this.guessingPaymentMethod = this.guessingPaymentMethod.bind(this);
     this.sdkResponseHandler = this.sdkResponseHandler.bind(this);
     this.onSubmit = this.onSubmit.bind(this);
+
+    this.state = {
+      submit: false,
+    };
   }
 
   /**
@@ -71,8 +75,11 @@ class App extends Component {
    */
   onSubmit(event) {
     event.preventDefault();
-    const form = document.getElementsByTagName('form')[0];
-    window.Mercadopago.createToken(form, this.sdkResponseHandler);
+
+    if (!this.state.submit) {
+      const form = document.getElementsByTagName('form')[0];
+      window.Mercadopago.createToken(form, this.sdkResponseHandler);
+    }
   }
 
   /**
@@ -85,7 +92,15 @@ class App extends Component {
   sdkResponseHandler(status, response) {
     if (status !== 200 && status !== 201) {
       alert("verify filled data");
+
+      this.setState({
+        submit: false,
+      });
     } else {
+      this.setState({
+        submit: true,
+      });
+
       const form = document.querySelector('#pay');
       const card = document.createElement('input');
 
