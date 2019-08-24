@@ -12,7 +12,7 @@ class App extends Component {
   }
 
   componentDidMount() {
-    window.Mercadopago.setPublishableKey("TEST-*******");
+    window.Mercadopago.setPublishableKey('TEST-bed4beea-a885-451b-8a83-4f55a3ca517b');
     window.Mercadopago.getIdentificationTypes();
   }
 
