@@ -1,0 +1,62 @@
+body {
+  background: #f5f6f8;
+  font-size: 14px;
+}
+
+.App {
+  margin: 0 auto;
+}
+
+h1 {
+  padding: 10px;
+  margin-bottom: 0px;
+}
+
+form {
+  margin: 0 auto;
+  padding: 10px;
+}
+
+fieldset {
+  padding: 0px;
+  border: 0px;
+}
+
+ul {
+  padding: 0px;
+  margin: 0px;
+  list-style: none;
+}
+
+label {
+  display: block;
+  margin: 5px 0px 5px 0px;
+}
+
+input,
+select {
+  padding: 12px 10px;
+  min-width: 100%;
+  box-sizing: border-box;
+  border: 2px solid #eee;
+  border-radius: 0px;
+  height: 40px;
+}
+
+input[type=submit] {
+  margin-top: 10px;
+  padding: 5px 15px;
+  color: white;
+  background: #009ee3;
+  border: 1px solid #009ee3;
+  cursor: pointer;
+  -webkit-border-radius: 5px;
+  border-radius: 5px;
+  height: 50px;
+  font-size: 14px;
+}
+
+input[type=submit]:hover {
+  background: #32b3ff;
+  border-color: #32b3ff;
+}

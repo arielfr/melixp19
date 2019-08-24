@@ -4,3 +4,4 @@
 *.iml
 .vs/*
 .vscode/*
+/node_modules/.cache/**
