@@ -593,4 +593,4 @@ You are all set!
 
 ## Social
 
-Follow me on Twitter `@afr88`
+Follow me on Twitter [@afr88](https://twitter.com/afr88)
