@@ -9,8 +9,15 @@ class App extends Component {
     this.guessingPaymentMethod = this.guessingPaymentMethod.bind(this);
     this.sdkResponseHandler = this.sdkResponseHandler.bind(this);
     this.onSubmit = this.onSubmit.bind(this);
+
+    this.state = {
+      submit: false,
+    };
   }
 
+  /**
+   * Set credentials and call initial methods
+   */
   componentDidMount() {
     window.Mercadopago.setPublishableKey('TEST-bed4beea-a885-451b-8a83-4f55a3ca517b');
     window.Mercadopago.getIdentificationTypes();
@@ -60,20 +67,40 @@ class App extends Component {
     }
   };
 
+  /**
+   * This method is going to be called when the form is submited
+   * Is going to create the card token using the MercadoPago SDK
+   *
+   * @param {object} event React event
+   */
   onSubmit(event) {
     event.preventDefault();
 
-    const form = document.getElementsByTagName('form')[0];
-
-    window.Mercadopago.createToken(form, this.sdkResponseHandler); // The function "sdkResponseHandler" is defined below
-
-    return false;
+    if (!this.state.submit) {
+      const form = document.getElementsByTagName('form')[0];
+      window.Mercadopago.createToken(form, this.sdkResponseHandler);
+    }
   }
 
+  /**
+   * This method is going to handle the createToken call made by the SDK
+   * If it is successful is going to add a hidden input with the card token value
+   *
+   * @param {Number} status HTTP status code
+   * @param {Object} response The response from SDK
+   */
   sdkResponseHandler(status, response) {
     if (status !== 200 && status !== 201) {
       alert("verify filled data");
+
+      this.setState({
+        submit: false,
+      });
     } else {
+      this.setState({
+        submit: true,
+      });
+
       const form = document.querySelector('#pay');
       const card = document.createElement('input');
 
@@ -90,7 +117,7 @@ class App extends Component {
     return (
       <div className="App">
         <h1>Checkout</h1>
-        <form action="" method="post" id="pay" name="pay" onSubmit={this.onSubmit}>
+        <form action="http://localhost:3001/pay" method="post" id="pay" name="pay" onSubmit={this.onSubmit}>
           <fieldset>
             <ul>
               <li>
@@ -150,7 +177,7 @@ class App extends Component {
                   type="text"
                   id="cardExpirationYear"
                   data-checkout="cardExpirationYear"
-                  placeholder="2015"
+                  placeholder="2019"
                   autoComplete="off"
                 />
               </li>
