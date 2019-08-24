@@ -464,39 +464,56 @@ You just did the payment form and capture all the necessary information to proce
 
 ![Party Gif](https://user-images.githubusercontent.com/4379982/62431004-00064180-b6fa-11e9-83a0-c05fae609ba4.gif)
 
-###  Step 5 - API Side
+### Step 5 - Backend Side (API)
 
-This form is going to sent the following information to the backend:
+The payment form created previously is going to be making a `POST` to our Backend with the next information:
 
-* email
-* paymentMethodId
-* token
+* email - Payer email
+* paymentMethodId - Payment Method Id from Guessing
+* token - Safe Id (`token`) generated from the Mercado Pago API
 
-Now we need to make an API and integrate it with mercadopago
+Now we need to create our Backend to receive this information and make the payment
 
-#### Creating the API
+#### Creating the Backend
 
-Let's start creating a `api` folder and init the project
+Let's start creating a `/api` folder on the `root` of our project and initialize a [NPM](https://npmjs.com) project with the next command:
 
 ```
 $ npm init
 ```
 
-Install the following dependencies
+> The previous command generated a `package.json` file
 
-* [express](https://npmjs.com/package/express) - For the web server
-* [body-parser](https://npmjs.com/package/body-parser)
-* [mercadopago](https://npmjs.com/package/mercadopago) - Official NodeJS mercadopago API
+Now we can install the following dependencies:
 
-And create an empty `index.js` file
+* [express](https://npmjs.com/package/express) - Web Framework
+* [body-parser](https://npmjs.com/package/body-parser) - Used to capture the `body` sent from the payemnt `<form>`
+* [mercadopago](https://npmjs.com/package/mercadopago) - Official NodeJS Mercado Pago SDK
+
+We can install them with the next command:
+
+```
+$ npm install express body-parser mercadopago --save
+```
+
+Once the dependencies were install, we can start writting our server. First we need an application entry point. We can create it with the next command:
 
 ```
 $ touch index.js
 ```
 
-###  Step 6
+### Step 6 - Creating Server & Configuring SDK
 
-Now we need to create a `express` basic server and attach the `body-parser`
+Now we need to create a basic `express` server
+
+```javascript
+const express = require('express');
+const app = express();
+
+app.listen(3001);
+```
+
+Next you need to attach the `body-parser` to be able to interpret the information sent via `POST` from the `<form>`
 
 ```javascript
 const express = require('express');
@@ -509,17 +526,19 @@ app.use(bodyParser.urlencoded({ extended: false }));
 app.listen(3001);
 ```
 
-Now that we have a server we need to add the `mercadopago` SDK and configure it
+Now we need to add the [mercadopago](https://npmjs.com/package/mercadopago) SDK dependency and configure it.
 
 ```javascript
 const mercadopago = require('mercadopago');
 
-mercadopago.configurations.setAccessToken('TEST-********');
+mercadopago.configurations.setAccessToken('TEST-169606388010973-082414-1c20929a9443e6f84e4f7a855affe0a8-464359136');
 ```
 
-###  Step 7
+Now we are ready to receive the information and make the payment
 
-Now we just need a route to receive the data from the form and make the payment
+### Step 7 - Making the Payment
+
+The first thing to do is creating the route for receiving the information from the `<form>` via `POST` HTTP method
 
 ```javascript
 app.post('/pay', function (req, res) {
@@ -527,7 +546,7 @@ app.post('/pay', function (req, res) {
 });
 ```
 
-Once we create the route we need to get the form data
+We can get the payment information from the `request` object inside the `body` attribute
 
 ```javascript
 const token = req.body.token;
@@ -535,7 +554,7 @@ const paymentMethodId = req.body.paymentMethodId;
 const email = req.body.email;
 ```
 
-Then create the payload to be send to the Payments API
+Then we can construct the payload to be sent to the Mercado Pago Payments API
 
 ```javascript
   const paymentData = {
@@ -550,7 +569,7 @@ Then create the payload to be send to the Payments API
   };
 ```
 
-Do the payment
+The SDK provides a way to create a payment call `save` using the `payment` object
 
 ```javascript
   mercadopago.payment.save(paymentData).then(function (payment) {
@@ -562,10 +581,16 @@ Do the payment
   });
 ```
 
-Now we just need to change the `action` property on the form and do your payment
+The only thing missing is changing the `action` property on the `<form>` previously created
 
 ```javascript
-<form action="http://localhost:3001/pay" method="post" id="pay" name="pay" onSubmit={this.onSubmit}>
+<form action="http://localhost:3001/pay" method="post" id="pay" name="pay" onSubmit={this.o+nSubmit}>
 ```
 
-That's it!
+You are all set!
+
+![Thumbs Up](https://user-images.githubusercontent.com/4379982/63641767-2cbed080-c68a-11e9-97fe-5350d4dc0d0c.gif)
+
+## Social
+
+Follow me on Twitter `@afr88`
