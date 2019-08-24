@@ -1,74 +1,85 @@
 # Mercado Livre Experience 2019 - São Paulo
 
-This is the repository for the talk "Como desenvolver uma integração de pagamentos em menos de 30 minutos" for Mercado Livre Experience 2019
+![MeliXP-Logo](https://user-images.githubusercontent.com/4379982/63639667-8e704200-c66c-11e9-9cac-84005369849e.png)
 
-## Talk
+This is the repository for the talk "Como desenvolver uma integração de pagamentos em menos de 30 minutos" on Mercado Livre Experience 2019
 
-In this talk we are going to be making an end-to-end integration with their API. We are going to be making the *Frontend* and *Backend*.
+## Brief
 
-### Technologies
+In this talk we are going to be making an end-to-end integration using the Mercado Pago SDK. We are going to be making the *Frontend* and *Backend*.
 
-We are going to be using NodeJS with the next packages:
+### Language, libraries, frameworks & more
+
+For this live coding we are going to be using NodeJS with the next packages:
 
 * [create-react-app](https://www.npmjs.com/package/create-react-app) - Frontend Application
-* [express](https://npmjs.com/package/express) - Backend to integrate the API
-* [mercadopago](https://npmjs.com/package/mercadopago) - Mercado Pago official API
+* [express](https://npmjs.com/package/express) - Backend for communication with Mercado Pago APIs
+* [mercadopago](https://npmjs.com/package/mercadopago) - Mercado Pago official SDK
 
-## Steps / Branching
+> If you have any doubt about NodeJS you can see reference [here](https://www.freecodecamp.org/news/what-exactly-is-node-js-ae36e97449f5/)
 
-To prevent poor internet connection i divided this repository in steps and version the `node_modules` folder
+## Steps / Branching system
 
-### Step 0
+To prevent poor internet connection during the talk, I divided this repository in the steps that we are going to be following. The `node_modules` folder is going to be versioned
 
-Empty application. Nothing to see here...
+### Step 0 - Initial Commit
 
-### Step 1
+This is the initial commit. The repository is going to be empty here...
 
-In this step we are going to create a basic React application using [create-react-app](https://www.npmjs.com/package/create-react-app).
+![Dr_UtZXUwAEjm7H](https://user-images.githubusercontent.com/4379982/63639767-df346a80-c66d-11e9-84f6-c609f90469cc.jpg)
+
+### Step 1 - Creating Application
+
+Now we are going to be creating a basic React application using [create-react-app](https://www.npmjs.com/package/create-react-app)
 
 ```
 $ npx create-react-app .
 ```
 
-Now we can run the server:
+Once this command was executed we can run the server:
 
 ```
 $ npm run start
 ```
 
-> Remember we are versioning `node_modules` to prevent poor connection problems ont he conference
+![Empty-React-Page](https://user-images.githubusercontent.com/4379982/63639819-ad6fd380-c66e-11e9-8a54-88ca33576583.png)
 
-### Step 2
+### Step 2 - Adding & Configuring SDK
 
-Now we are cleaning the default template of [create-react-app](https://www.npmjs.com/package/create-react-app).
+First we remove all the styles and HTML added by [create-react-app](https://www.npmjs.com/package/create-react-app).
 
-We are now ready for starting the integration. We need to go to the [Developer Site](https://developers.mercadopago.com) and to the API section:
+Now, we are finally ready to start the integration. Go to the [Developer Site](https://developers.mercadopago.com) and to the API section:
 
 * [Receive a payment with Credit Card](https://www.mercadopago.com.br/developers/pt/guides/payments/api/receiving-payment-by-card/)
 
-We need to follow this next steps:
+Then you need to follow the documentation step by step
 
-1. Add `mercadopago.js` that is the Javascript SDK
+#### Add the Javascript SDK
 
-On the index.html file add the current `script`
+Add `mercadopago.js` to your HTML. This is the Mercado Pago Javascript SDK
+
+On the `index.html` file in your `/public` folder, you need to add the current `script`
 
 ```html
 <script src="https://secure.mlstatic.com/sdk/javascript/v1/mercadopago.js"></script>
 ```
 
-> To prevent internet connections you can copy the script from `/public/mercadpago.js`
+> To prevent internet connection failure during the talk I copied the script on the `/public` folder
 
-2. Configure your credentials
 
-This is the first thing you want to do when your page starts up. To achieve this in a React lifecycle, you need to do it on your `componentDidMount` method
+#### Configure your credentials
+
+This is the first thing you want to do when your page starts up. To achieve this in a React lifecycle, this needs to be done it on your `componentDidMount` method. This method is going to guarantee that the DOM is ready and the `mercadopago.js` is lodaded on them
 
 ```javascript
 componentDidMount() {
-  window.Mercadopago.setPublishableKey('TEST-************');
+  window.Mercadopago.setPublishableKey('TEST-0f1ac411-40d9-494c-8c26-a7e6795e70cb');
 }
 ```
 
-Before you do this, [create-react-app](https://www.npmjs.com/package/create-react-app) creates an `App.js` as a stateless component. We need to convert it into a state component. To do this we need to change it to a class instead of a function.
+> This credential is from a test user. It was refreshed after the talk ended to preventing impersonification. Replace it with your own one.
+
+To achieve this we need to convert the `App.js` to a Class (Class Component). Why? Because [create-react-app](https://www.npmjs.com/package/create-react-app) created the `App.js` a stateless component by default.
 
 ```javascript
 import React, { Component } from 'react';
@@ -76,7 +87,7 @@ import './App.css';
 
 class App extends Component {
   componentDidMount() {
-    window.Mercadopago.setPublishableKey('TEST-************');
+    window.Mercadopago.setPublishableKey('TEST-0f1ac411-40d9-494c-8c26-a7e6795e70cb');
   }
 
   render() {
@@ -89,160 +100,118 @@ class App extends Component {
 }
 ```
 
-Now, you have the App created and MercadoPago configured to start implementing
+Yeah! :raised_hands: We just created an empty Application and configured the Mercado Pago SDK.
 
-### Step 3
+### Step 3 - Payment Form
 
-Like every Checkout, now you need to implement the Payment form. The form is already on the [Developers Site](https://www.mercadopago.com.br/developers/pt/guides/payments/api/receiving-payment-by-card/) we just need to copy
+Like every Checkout out there we need a payment form. In this form we are going to be asking the basic information to process the payment and prevent fraud payments. This form is ready for you on the [Developers Site](https://www.mercadopago.com.br/developers/pt/guides/payments/api/receiving-payment-by-card/).
 
-```javascript
-<form action="" method="post" id="pay" name="pay" >
-    <fieldset>
-        <ul>
-            <li>
-                <label for="email">Email</label>
-                <input id="email" name="email" value="test_user_19653727@testuser.com" type="email" placeholder="your email"/>
-            </li>
-            <li>
-                <label for="cardNumber">Credit card number:</label>
-                <input type="text" id="cardNumber" data-checkout="cardNumber" placeholder="4509 9535 6623 3704" onselectstart="return false" onpaste="return false" onCopy="return false" onCut="return false" onDrag="return false" onDrop="return false" autocomplete=off />
-            </li>
-            <li>
-                <label for="securityCode">Security code:</label>
-                <input type="text" id="securityCode" data-checkout="securityCode" placeholder="123" onselectstart="return false" onpaste="return false" onCopy="return false" onCut="return false" onDrag="return false" onDrop="return false" autocomplete=off />
-            </li>
-            <li>
-                <label for="cardExpirationMonth">Expiration month:</label>
-                <input type="text" id="cardExpirationMonth" data-checkout="cardExpirationMonth" placeholder="12" onselectstart="return false" onpaste="return false" onCopy="return false" onCut="return false" onDrag="return false" onDrop="return false" autocomplete=off />
-            </li>
-            <li>
-                <label for="cardExpirationYear">Expiration year:</label>
-                <input type="text" id="cardExpirationYear" data-checkout="cardExpirationYear" placeholder="2015" onselectstart="return false" onpaste="return false" onCopy="return false" onCut="return false" onDrag="return false" onDrop="return false" autocomplete=off />
-            </li>
-            <li>
-                <label for="cardholderName">Card holder name:</label>
-                <input type="text" id="cardholderName" data-checkout="cardholderName" placeholder="APRO" />
-            </li>
-            <li>
-                <label for="docType">Document type:</label>
-                <select id="docType" data-checkout="docType"></select>
-            </li>
-            <li>
-                <label for="docNumber">Document number:</label>
-                <input type="text" id="docNumber" data-checkout="docNumber" placeholder="12345678" />
-            </li>
-        </ul>
-        <input type="hidden" name="paymentMethodId" />
-        <input type="submit" value="Pay!" />
-    </fieldset>
-</form>
-```
-
-But, not so fast, first we need to adapt the HTTP properties to be JSX compatible
+Not so fast :hand:! This form is ready for plain HTTP, but not for React
 
 ````javascript
 <form action="" method="post" id="pay" name="pay">
-          <fieldset>
-            <ul>
-              <li>
-                <label htmlFor="email">
-                  Email
-                </label>
-                <input
-                  id="email"
-                  name="email"
-                  value="test_user_19653727@testuser.com"
-                  type="email"
-                  placeholder="your email"
-                />
-              </li>
-              <li>
-                <label htmlFor="cardNumber">
-                  Credit card number:
-                </label>
-                <input
-                  type="text"
-                  id="cardNumber"
-                  data-checkout="cardNumber"
-                  placeholder="4509953566233704"
-                  autoComplete="off"
-                />
-              </li>
-              <li>
-                <label htmlFor="securityCode">
-                  Security code:
-                </label>
-                <input
-                  type="text"
-                  id="securityCode"
-                  data-checkout="securityCode"
-                  placeholder="123"
-                  autoComplete="off"
-                />
-              </li>
-              <li>
-                <label htmlFor="cardExpirationMonth">
-                  Expiration month:
-                </label>
-                <input
-                  type="text"
-                  id="cardExpirationMonth"
-                  data-checkout="cardExpirationMonth"
-                  placeholder="12"
-                  autoComplete="off" />
-              </li>
-              <li>
-                <label htmlFor="cardExpirationYear">
-                  Expiration year:
-                </label>
-                <input
-                  type="text"
-                  id="cardExpirationYear"
-                  data-checkout="cardExpirationYear"
-                  placeholder="2015"
-                  autoComplete="off"
-                />
-              </li>
-              <li>
-                <label
-                  htmlFor="cardholderName">
-                  Card holder name:
-                </label>
-                <input
-                  type="text"
-                  id="cardholderName"
-                  data-checkout="cardholderName"
-                  placeholder="APRO"
-                />
-              </li>
-              <li>
-                <label htmlFor="docType">
-                  Document type:
-                </label>
-                <select id="docType" data-checkout="docType"></select>
-              </li>
-              <li>
-                <label htmlFor="docNumber">Document number:</label>
-                <input
-                  type="text"
-                  id="docNumber"
-                  data-checkout="docNumber"
-                  placeholder="12345678"
-                />
-              </li>
-            </ul>
-            <input
-              type="hidden"
-              name="paymentMethodId"
-            />
-            <input type="submit" value="Pay!" />
-          </fieldset>
-        </form>
+  <fieldset>
+    <ul>
+      <li>
+        <label htmlFor="email">
+          Email
+        </label>
+        <input
+          id="email"
+          name="email"
+          defaultValue="test_user_71425066@testuser.com"
+          type="email"
+          placeholder="your email"
+        />
+      </li>
+      <li>
+        <label htmlFor="cardNumber">
+          Credit card number:
+        </label>
+        <input
+          type="text"
+          id="cardNumber"
+          data-checkout="cardNumber"
+          placeholder="4509953566233704"
+          autoComplete="off"
+          maxLength={16}
+        />
+      </li>
+      <li>
+        <label htmlFor="securityCode">
+          Security code:
+        </label>
+        <input
+          type="text"
+          id="securityCode"
+          data-checkout="securityCode"
+          placeholder="123"
+          autoComplete="off"
+        />
+      </li>
+      <li>
+        <label htmlFor="cardExpirationMonth">
+          Expiration month:
+        </label>
+        <input
+          type="text"
+          id="cardExpirationMonth"
+          data-checkout="cardExpirationMonth"
+          placeholder="12"
+          autoComplete="off" />
+      </li>
+      <li>
+        <label htmlFor="cardExpirationYear">
+          Expiration year:
+        </label>
+        <input
+          type="text"
+          id="cardExpirationYear"
+          data-checkout="cardExpirationYear"
+          placeholder="2015"
+          autoComplete="off"
+        />
+      </li>
+      <li>
+        <label
+          htmlFor="cardholderName">
+          Card holder name:
+        </label>
+        <input
+          type="text"
+          id="cardholderName"
+          data-checkout="cardholderName"
+          placeholder="APRO"
+        />
+      </li>
+      <li>
+        <label htmlFor="docType">
+          Document type:
+        </label>
+        <select id="docType" data-checkout="docType"></select>
+      </li>
+      <li>
+        <label htmlFor="docNumber">Document number:</label>
+        <input
+          type="text"
+          id="docNumber"
+          data-checkout="docNumber"
+          placeholder="12345678"
+        />
+      </li>
+    </ul>
+    <input
+      type="hidden"
+      name="paymentMethodId"
+    />
+    <input type="submit" value="Pay!" />
+  </fieldset>
+</form>
 ````
 
-> Note that the document type selector is empty
+> Note that the document type selector is empty. We are going to talk about this later
 
-The form looks really ugly with the CSS default by the browser. Let's add this CSS sugar
+The form looks really ugly with the CSS default by the browser. Let's add this CSS sugar :nail_care:
 
 ```css
 body {
@@ -309,16 +278,319 @@ input[type=submit]:hover {
 }
 ```
 
-### Step 4
+### Step 4 - Guessing, Card Token, Identification Type & Events
 
-Now that we have the form, we just need to attach the events & configurations methods provided by de MercadoPago Javascript SDK
+Looking what we just:
 
-1. The first method we need to call is `getIdentificationTypes` inside `componentDidMount`
+- Created the application
+- Added and configured the Mercado Pago SDK
+- Added and adapted the Payment Form
 
+The form doesn't work by itself, we need to attach some events to the input and use the SDK to initialize the magic.
+
+#### Identification Types
+
+Remember that I told you that the Identification `<select>` was empty?. This is because the SDK provides you a method (`getIdentificationTypes`) to auto populate this field using your credentials
+ 
 ````javascript
 window.Mercadopago.getIdentificationTypes();
 ````
 
-This method is going to populate the identification types select with the ones from the country of the public key provided
+We need to add this method (`getIdentificationTypes`) inside `componentDidMount`
 
+> This method is in charge of populating the identification types `<select>`
 
+#### Card Guessing
+
+One of the fields required to process a payment is the `Payment Method Id`* entered by the user. For getting this field the SDK provides you a method call `getPaymentMethod`that using the first 6 digits of the credit card number entered is going to guess the `Payment Method Id`.
+
+To do this we need to add the `onChange` prop on the credit card number `<input>`
+
+```javascript
+<input
+  type="text"
+  id="cardNumber"
+  data-checkout="cardNumber"
+  placeholder="4509953566233704"
+  autoComplete="off"
+  onChange={this.guessingPaymentMethod}
+/>
+```
+
+```javascript
+  guessingPaymentMethod(event) {
+    const bin = event.currentTarget.value;
+
+    if (bin.length >= 6) {
+      window.Mercadopago.getPaymentMethod({
+        //"bin": bin.substring(0, 6),
+      }, this.setPaymentMethodInfo);
+    }
+  }
+```
+
+Then we need to create the method `setPaymentMethodInfo` that we are using as a callback on `guessingPaymentMethod`. This method is going to be in charge of population the hidden `<input>` with the value from the guessing
+
+```javascript
+  setPaymentMethodInfo(status, response) {
+    if (status === 200) {
+      const paymentMethodElement = document.querySelector('input[name=paymentMethodId]');
+
+      if (paymentMethodElement) {
+        paymentMethodElement.value = response[0].id;
+      } else {
+        const form = document.querySelector('#pay');
+        const input = document.createElement('input');
+
+        input.setAttribute('name', 'paymentMethodId');
+        input.setAttribute('type', 'hidden');
+        input.setAttribute('value', response[0].id);
+
+        form.appendChild(input);
+      }
+    } else {
+      alert(`Payment Method not Found`);
+    }
+  };
+```
+
+#### Tokenization
+
+This is the process when all of the payer information is converted into a safe id to prevent hackers to stole of your information.
+
+How we do this? The SDK Provides a method call `createToken` to convert this information into the safe id (token)
+
+To achieve this we need to attach a `onSubmit` event for the checkout form
+
+```javascript
+<form action="" method="post" id="pay" name="pay" onSubmit={this.onSubmit}>
+```
+
+Then we need to add the `onSubmit` method that is going to use the `createToken` provided by the SDK
+
+```javascript
+  onSubmit(event) {
+    event.preventDefault();
+
+    const form = document.querySelector('#pay');
+
+    window.Mercadopago.createToken(form, this.sdkResponseHandler); // The function "sdkResponseHandler" is defined below
+
+    return false;
+  }
+```
+
+This method is going to generate the safe id (`token`) to be added on the on the `<form>`. To do this we need copy the example from the [Developers Site](https://www.mercadopago.com.br/developers/pt/guides/payments/api/receiving-payment-by-card/).
+
+```javascript
+  sdkResponseHandler(status, response) {
+    if (status !== 200 && status !== 201) {
+      alert("verify filled data");
+    } else {
+      const form = document.querySelector('#pay');
+      const card = document.createElement('input');
+      
+      card.setAttribute('name', 'token');
+      card.setAttribute('type', 'hidden');
+      card.setAttribute('value', response.id);
+      
+      form.appendChild(card);
+      form.submit();
+    }
+  };
+```
+
+If you see this example, once the `token` is generated is going to submit the form. This is causing that the `token` is generated again and before its generated again the form is submitted again. We need to add a variable on the state to stop this.
+
+```javascript
+  constructor(props){
+    super(props);
+
+    this.setPaymentMethodInfo = this.setPaymentMethodInfo.bind(this);
+    this.guessingPaymentMethod = this.guessingPaymentMethod.bind(this);
+    this.sdkResponseHandler = this.sdkResponseHandler.bind(this);
+    this.onSubmit = this.onSubmit.bind(this);
+
+    this.state = {
+      submit: false,
+    };
+  }
+```
+
+Then we need to prevent the re generation of the `token` on the `onSubmit` method
+
+```javascript
+  onSubmit(event) {
+    event.preventDefault();
+
+    if (!this.state.submit) {
+      const form = document.getElementsByTagName('form')[0];
+      window.Mercadopago.createToken(form, this.sdkResponseHandler);
+    }
+  }
+```
+
+Now we just need to update this state variable in order to work correctly
+
+```javascript
+  sdkResponseHandler(status, response) {
+    if (status !== 200 && status !== 201) {
+      alert("verify filled data");
+
+      this.setState({
+        submit: false,
+      });
+    } else {
+      this.setState({
+        submit: true,
+      });
+
+      const form = document.querySelector('#pay');
+      const card = document.createElement('input');
+
+      card.setAttribute('name', 'token');
+      card.setAttribute('type', 'hidden');
+      card.setAttribute('value', response.id);
+
+      form.appendChild(card);
+      form.submit();
+    }
+  };
+```
+
+#### Party!
+
+You just did the payment form and capture all the necessary information to process the payment
+
+![Party Gif](https://user-images.githubusercontent.com/4379982/62431004-00064180-b6fa-11e9-83a0-c05fae609ba4.gif)
+
+### Step 5 - Backend Side (API)
+
+The payment form created previously is going to be making a `POST` to our Backend with the next information:
+
+* email - Payer email
+* paymentMethodId - Payment Method Id from Guessing
+* token - Safe Id (`token`) generated from the Mercado Pago API
+
+Now we need to create our Backend to receive this information and make the payment
+
+#### Creating the Backend
+
+Let's start creating a `/api` folder on the `root` of our project and initialize a [NPM](https://npmjs.com) project with the next command:
+
+```
+$ npm init
+```
+
+> The previous command generated a `package.json` file
+
+Now we can install the following dependencies:
+
+* [express](https://npmjs.com/package/express) - Web Framework
+* [body-parser](https://npmjs.com/package/body-parser) - Used to capture the `body` sent from the payemnt `<form>`
+* [mercadopago](https://npmjs.com/package/mercadopago) - Official NodeJS Mercado Pago SDK
+
+We can install them with the next command:
+
+```
+$ npm install express body-parser mercadopago --save
+```
+
+Once the dependencies were install, we can start writting our server. First we need an application entry point. We can create it with the next command:
+
+```
+$ touch index.js
+```
+
+### Step 6 - Creating Server & Configuring SDK
+
+Now we need to create a basic `express` server
+
+```javascript
+const express = require('express');
+const app = express();
+
+app.listen(3001);
+```
+
+Next you need to attach the `body-parser` to be able to interpret the information sent via `POST` from the `<form>`
+
+```javascript
+const express = require('express');
+const bodyParser = require('body-parser');
+const app = express();
+
+// Attach the body-parser
+app.use(bodyParser.urlencoded({ extended: false }));
+
+app.listen(3001);
+```
+
+Now we need to add the [mercadopago](https://npmjs.com/package/mercadopago) SDK dependency and configure it.
+
+```javascript
+const mercadopago = require('mercadopago');
+
+mercadopago.configurations.setAccessToken('TEST-169606388010973-082414-1c20929a9443e6f84e4f7a855affe0a8-464359136');
+```
+
+Now we are ready to receive the information and make the payment
+
+### Step 7 - Making the Payment
+
+The first thing to do is creating the route for receiving the information from the `<form>` via `POST` HTTP method
+
+```javascript
+app.post('/pay', function (req, res) {
+  // Route handler
+});
+```
+
+We can get the payment information from the `request` object inside the `body` attribute
+
+```javascript
+const token = req.body.token;
+const paymentMethodId = req.body.paymentMethodId;
+const email = req.body.email;
+```
+
+Then we can construct the payload to be sent to the Mercado Pago Payments API
+
+```javascript
+  const paymentData = {
+    transaction_amount: 100,
+    token: token,
+    description: 'MeliXP 2019 - Test Payment',
+    installments: 1,
+    payment_method_id: paymentMethodId,
+    payer: {
+      email: email,
+    },
+  };
+```
+
+The SDK provides a way to create a payment call `save` using the `payment` object
+
+```javascript
+  mercadopago.payment.save(paymentData).then(function (payment) {
+    res.send(payment);
+  }).catch(function (error) {
+    res.status(500).send({
+      message: error.message
+    });
+  });
+```
+
+The only thing missing is changing the `action` property on the `<form>` previously created
+
+```javascript
+<form action="http://localhost:3001/pay" method="post" id="pay" name="pay" onSubmit={this.o+nSubmit}>
+```
+
+You are all set!
+
+![Thumbs Up](https://user-images.githubusercontent.com/4379982/63641767-2cbed080-c68a-11e9-97fe-5350d4dc0d0c.gif)
+
+## Social
+
+Follow me on Twitter [@afr88](https://twitter.com/afr88)
