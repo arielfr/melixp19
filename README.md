@@ -361,7 +361,7 @@ Then we need to create `setPaymentMethodInfo` that is going to create a hidden i
         const form = document.querySelector('#pay');
         const input = document.createElement('input');
 
-        input.setattribute('name', 'paymentMethodId');
+        input.setAttribute('name', 'paymentMethodId');
         input.setAttribute('type', 'hidden');
         input.setAttribute('value', response[0].id);
 
