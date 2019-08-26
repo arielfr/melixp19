@@ -19,7 +19,7 @@ class App extends Component {
    * Set credentials and call initial methods
    */
   componentDidMount() {
-    window.Mercadopago.setPublishableKey('TEST-bed4beea-a885-451b-8a83-4f55a3ca517b');
+    window.Mercadopago.setPublishableKey('TEST-0f1ac411-40d9-494c-8c26-a7e6795e70cb');
     window.Mercadopago.getIdentificationTypes();
   }
 
